@@ -407,14 +407,14 @@ input:focus {
 }
 
 .ebook-large {
-  width: 210%;
-  max-width: 800px;
-  display: block;
-  margin-left: -55%;
-  margin-top: -55px;
-  margin-bottom: 17px;
-  border-radius: 13px;
-  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+    width: 210%;
+    max-width: 100%;
+    display: block;
+    /* margin-left: -55%; */
+    /* margin-top: -55px; */
+    margin-bottom: 22px;
+    border-radius: 13px;
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
 }
 
 .cta-badge {
