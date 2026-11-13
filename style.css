@@ -20,7 +20,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 24px 14px;
+  padding: 68px 14px 28px;
   position: relative;
 }
 
@@ -36,6 +36,44 @@ body::before {
   background: radial-gradient(circle, rgba(255, 0, 119, 0.16) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
+}
+
+/* =========================================================
+   CRONÔMETRO ETIQUETA FIXA NA TELA O TEMPO INTEIRO
+   ========================================================= */
+.cronometro-badge {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  background: linear-gradient(90deg, rgba(36, 0, 18, 0.95) 0%, rgba(74, 0, 40, 0.95) 50%, rgba(36, 0, 18, 0.95) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.55);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75), 0 0 15px rgba(255, 0, 119, 0.4);
+  color: #fff5fa;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  text-align: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.cronometro-badge strong {
+  color: #ffd700;
+  font-weight: 700;
+}
+
+.cronometro-icone {
+  font-size: 0.95rem;
+  animation: pulsarLeve 1.5s infinite ease-in-out;
 }
 
 /* =========================================================
@@ -109,6 +147,9 @@ form {
 
 .input-group {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 input {
@@ -137,6 +178,27 @@ input:focus {
   border-color: #ff0077;
   box-shadow: 0 0 18px rgba(255, 0, 119, 0.45);
   transform: translateY(-1px);
+}
+
+/* Aviso pequeno embaixo do campo de data de nascimento */
+.aviso-data {
+  display: block;
+  margin-top: 7px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #ffb3d9;
+  background: rgba(255, 0, 119, 0.12);
+  border: 1px dashed rgba(255, 105, 180, 0.35);
+  padding: 6px 12px;
+  border-radius: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+.aviso-data.aviso-erro {
+  color: #fff;
+  background: rgba(255, 0, 85, 0.35);
+  border-color: #ffd700;
 }
 
 .btn-principal {
@@ -319,6 +381,8 @@ input:focus {
   cursor: pointer;
   position: relative;
   transition: transform 0.3s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .flip-card:hover {
@@ -332,14 +396,18 @@ input:focus {
   text-align: center;
   transition: transform 0.85s cubic-bezier(0.4, 0.2, 0.2, 1);
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .flip-card.flipped .flip-inner {
   transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
 }
 
 .flip-front, .flip-back {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
@@ -352,6 +420,7 @@ input:focus {
 
 .flip-front {
   transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
 }
 
 .flip-back img, .flip-front img {
@@ -360,6 +429,7 @@ input:focus {
   object-fit: cover;
   border-radius: 12px;
   margin: 0;
+  pointer-events: none;
 }
 
 /* =========================================================
@@ -383,7 +453,7 @@ input:focus {
   line-height: 1.6;
   color: #fff5fa;
   font-weight: 500;
-  text-align:center;
+  text-align: center;
 }
 
 .resumo-animado {
@@ -407,14 +477,12 @@ input:focus {
 }
 
 .ebook-large {
-    width: 210%;
-    max-width: 100%;
-    display: block;
-    /* margin-left: -55%; */
-    /* margin-top: -55px; */
-    margin-bottom: 22px;
-    border-radius: 13px;
-    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+  width: 210%;
+  max-width: 100%;
+  display: block;
+  margin-bottom: 22px;
+  border-radius: 13px;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
 }
 
 .cta-badge {
@@ -532,6 +600,13 @@ input:focus {
 
 /* Responsividade Mobile */
 @media (max-width: 480px) {
+  body {
+    padding-top: 64px;
+  }
+  .cronometro-badge {
+    font-size: 0.74rem;
+    padding: 7px 12px;
+  }
   .container {
     padding: 24px 18px;
   }

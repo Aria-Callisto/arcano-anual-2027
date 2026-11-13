@@ -32,6 +32,12 @@ src="https://www.facebook.com/tr?id=3003740953158547&ev=PageView&noscript=1"
 </head>
 <body>
 
+<!-- Etiqueta fixa de cronômetro na tela o tempo inteiro -->
+<div id="cronometro-badge" class="cronometro-badge">
+  <span class="cronometro-icone">⏳</span>
+  <span id="cronometro-texto">Falta 0 dias, 0 horas e 0 minutos pro ano acabar!</span>
+</div>
+
 <div id="loading-screen" class="hidden">
   <div class="loading-glow"></div>
   <img src="images/aria.gif" alt="Analisando Destino..." id="loading-gif">
@@ -52,7 +58,10 @@ src="https://www.facebook.com/tr?id=3003740953158547&ev=PageView&noscript=1"
       <input type="text" id="nome" placeholder="Digite seu primeiro nome" required autocomplete="given-name">
     </div>
     <div class="input-group">
-      <input type="text" id="data" placeholder="Data de Nascimento (DD/MM/AAAA)" inputmode="numeric" required>
+      <input type="text" id="data" placeholder="Data de Nascimento (DD/MM/AAAA)" inputmode="numeric" maxlength="10" required>
+      <small id="aviso-data" class="aviso-data">
+        ⚠️ Coloque sua <strong>data de nascimento inteira</strong> (dia, mês e os 4 dígitos do ano. Ex: 15/08/1995).
+      </small>
     </div>
     <button type="submit" class="btn-principal">✨ Revelar Meu Arcano Anual ✨</button>
   </form>
@@ -94,9 +103,10 @@ src="https://www.facebook.com/tr?id=3003740953158547&ev=PageView&noscript=1"
       </div>
     </div>
 
+    <!-- CORRIGIDO: id="cardComplementar2" (antes estava cardCompflementar2, travando O Mago) -->
     <div class="arcano hidden" id="boxComplementar2">
       <p id="arcanoComplementar2" class="nome-carta-label">Segundo Arcano Complementar:</p>
-      <div class="flip-card" id="cardCompflementar2">
+      <div class="flip-card" id="cardComplementar2">
         <div class="flip-inner">
           <div class="flip-front">
             <img id="imgComplementar2" src="" alt="Carta Complementar 2">
@@ -172,6 +182,34 @@ src="https://www.facebook.com/tr?id=3003740953158547&ev=PageView&noscript=1"
 
 <script>
 // =========================
+// Cronômetro Fixo até 31/12 às 23:59
+// =========================
+function atualizarCronometro() {
+  const textoEl = document.getElementById("cronometro-texto");
+  if (!textoEl) return;
+
+  const agora = new Date();
+  const anoAlvo = 2026; // Conta até 31/12/2026 às 23:59:59
+  const dataAlvo = new Date(anoAlvo, 11, 31, 23, 59, 59);
+
+  const diferenca = dataAlvo - agora;
+
+  if (diferenca <= 0) {
+    textoEl.innerHTML = "✨ O novo ciclo já começou! Descubra seu Arcano! ✨";
+    return;
+  }
+
+  const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
+  const minutos = Math.floor((diferenca / 1000 / 60) % 60);
+
+  textoEl.innerHTML = `Falta <strong>${dias} dias</strong>, <strong>${horas} horas</strong> e <strong>${minutos} minutos</strong> pro ano acabar!`;
+}
+
+atualizarCronometro();
+setInterval(atualizarCronometro, 15000);
+
+// =========================
 // Configurações / Constantes
 // =========================
 const totalArcanos = 22;
@@ -206,53 +244,53 @@ const nomesArcanos = {
 
 // Mini textos personalizados abaixo da carta gerada para cada um dos 22 Arcanos
 const textosResumoArcanos = {
-  1:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Mago</strong> traz bastante <strong>poder de manifestação</strong>, <strong>inícios empolgantes</strong> e <strong>portas abertas</strong>.<br><br>Mas se prepara que vem por aí muita <strong>dispersão</strong>, <strong>promessas vazias</strong> e <strong>sobrecarga mental</strong> tentando abraçar o mundo sozinha, e você precisa se preparar pra isso.",
-  2:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Sacerdotisa</strong> traz bastante <strong>intuição aguçada</strong>, <strong>percepção espiritual</strong> e <strong>mistério</strong>.<br><br>Mas se prepara que vem por aí muita <strong>dúvida interna</strong>, <strong>segredos pesados vindo à tona</strong> e <strong>bloqueios emocionais</strong> por guardar tudo pra si, e você precisa se preparar pra isso.",
-  3:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Imperatriz</strong> traz bastante <strong>magnetismo pessoal</strong>, <strong>prosperidade</strong> e <strong>criatividade fértil</strong>.<br><br>Mas se prepara que vem por aí muita <strong>cobrança emocional</strong>, <strong>gastos por impulso</strong> e <strong>disputas de ego e ciúmes</strong> nas suas relações, e você precisa se preparar pra isso.",
-  4:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Imperador</strong> traz bastante <strong>ambição</strong>, <strong>conquista material</strong> e <strong>postura de liderança</strong>.<br><br>Mas se prepara que vem por aí muita <strong>pressão nos ombros</strong>, <strong>embates de poder</strong>, <strong>teimosia extrema</strong> e <strong>sobrecarga de responsabilidades</strong>, e você precisa se preparar pra isso.",
-  5:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Hierofante</strong> traz bastante <strong>sabedoria</strong>, <strong>alianças sérias</strong> e <strong>amadurecimento profissional</strong>.<br><br>Mas se prepara que vem por aí muita <strong>cobrança social</strong>, <strong>julgamento alheio</strong> e <strong>testes de fé</strong> que vão desafiar suas certezas, e você precisa se preparar pra isso.",
-  6:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano dos Enamorados</strong> traz bastante <strong>paixão</strong>, <strong>poder de atração</strong> e <strong>parcerias marcantes</strong>.<br><br>Mas se prepara que vem por aí muita <strong>dúvida cruel</strong>, <strong>tentações perigosas</strong> e <strong>encruzilhadas emocionais</strong> onde você não vai poder ficar em cima do muro, e você precisa se preparar pra isso.",
-  7:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Carro</strong> traz bastante <strong>movimento</strong>, <strong>viagens</strong> e <strong>avanço acelerado</strong> nas suas metas.<br><br>Mas se prepara que vem por aí muita <strong>correria exaustiva</strong>, <strong>ansiedade a mil</strong> e <strong>risco de atropelar tudo</strong> por falta de direção emocional, e você precisa se preparar pra isso.",
-  8:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Justiça</strong> traz bastante <strong>colheita kármica</strong>, <strong>equilíbrio</strong> e <strong>conquista daquilo que é seu por direito</strong>.<br><br>Mas se prepara que vem por aí muita <strong>cobrança implacável</strong>, <strong>cortes frios</strong> e <strong>acertos de contas</strong> onde nada vai passar batido, e você precisa se preparar pra isso.",
-  9:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Eremita</strong> traz bastante <strong>autoconhecimento profundo</strong>, <strong>clareza mental</strong> e <strong>maturidade espiritual</strong>.<br><br>Mas se prepara que vem por aí muita <strong>sensação de solidão</strong>, <strong>afastamentos necessários</strong> e <strong>crises existenciais profundas</strong>, e você precisa se preparar pra isso.",
-  10: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Roda da Fortuna</strong> traz bastante <strong>reviravolta positiva</strong>, <strong>sorte inesperada</strong> e <strong>destrave financeiro</strong>.<br><br>Mas se prepara que vem por aí muita <strong>instabilidade</strong>, <strong>altos e baixos repentinos</strong> e <strong>mudanças de planos sem aviso prévio</strong>, e você precisa se preparar pra isso.",
-  11: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Força</strong> traz bastante <strong>magnetismo</strong>, <strong>coragem</strong> e <strong>domínio próprio</strong>.<br><br>Mas se prepara que vem por aí muita <strong>provação de paciência</strong>, <strong>tensão acumulada</strong> e <strong>situações no limite</strong> que vão testar seu autocontrole, e você precisa se preparar pra isso.",
-  12: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Enforcado</strong> traz bastante <strong>despertar espiritual</strong>, <strong>virada de chave mental</strong> e <strong>libertação</strong>.<br><br>Mas se prepara que vem por aí muita <strong>sensação de estagnação</strong>, <strong>sacrifícios difíceis</strong> e <strong>atrasos</strong> que vão exigir uma mudança total de postura, e você precisa se preparar pra isso.",
-  13: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Morte</strong> traz bastante <strong>transformação radical</strong> e um <strong>renascimento poderoso</strong>.<br><br>Mas se prepara que vem por aí muita <strong>despedida inevitável</strong>, <strong>encerramento brusco de ciclos</strong> e <strong>desapegos profundos</strong> que doem na pele, e você precisa se preparar pra isso.",
-  14: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Temperança</strong> traz bastante <strong>cura emocional</strong>, <strong>harmonia</strong> e <strong>reconciliações</strong>.<br><br>Mas se prepara que vem por aí muita <strong>demora nos resultados</strong>, <strong>testes extremos de paciência</strong> e <strong>desgaste</strong> tentando equilibrar tudo ao mesmo tempo, e você precisa se preparar pra isso.",
-  15: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Diabo</strong> traz bastante <strong>ambição</strong>, <strong>ganhos financeiros</strong> e <strong>sedução avassaladora</strong>.<br><br>Mas se prepara que vem por aí muita <strong>tentação pesada</strong>, <strong>armadilhas de dependência emocional</strong>, <strong>inveja</strong> e <strong>jogos de manipulação</strong>, e você precisa se preparar pra isso.",
-  16: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Torre</strong> traz bastante <strong>libertação</strong>, <strong>quebra de ilusões</strong> e <strong>reconstrução em bases sólidas</strong>.<br><br>Mas se prepara que vem por aí muita <strong>quebra de expectativa</strong>, <strong>estruturas caindo por terra</strong> e <strong>verdades nuas e cruas</strong> que vão chacoalhar sua zona de conforto, e você precisa se preparar pra isso.",
-  17: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Estrela</strong> traz bastante <strong>brilho próprio</strong>, <strong>cura profunda</strong> e <strong>visibilidade para o seu trabalho</strong>.<br><br>Mas se prepara que vem por aí muita <strong>desilusão com pessoas próximas</strong>, <strong>testes de autoestima</strong> e <strong>frustrações</strong> por idealizar quem não merece, e você precisa se preparar pra isso.",
-  18: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Lua</strong> traz bastante <strong>poder intuitivo</strong>, <strong>magia</strong> e <strong>magnetismo misterioso</strong>.<br><br>Mas se prepara que vem por aí muita <strong>confusão mental</strong>, <strong>fofoca nos bastidores</strong>, <strong>ilusões perigosas</strong> e <strong>noites em claro</strong> lidando com inseguranças, e você precisa se preparar pra isso.",
-  19: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Sol</strong> traz bastante <strong>sucesso</strong>, <strong>prosperidade</strong>, <strong>clareza</strong> e <strong>reconhecimento</strong>.<br><br>Mas se prepara que vem por aí muita <strong>exposição</strong>, <strong>inveja de quem não suporta a sua luz</strong> e <strong>choques de ego</strong> no seu caminho, e você precisa se preparar pra isso.",
-  20: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Julgamento</strong> traz bastante <strong>despertar de propósito</strong>, <strong>virada de vida</strong> e <strong>segundas chances</strong>.<br><br>Mas se prepara que vem por aí muita <strong>cobrança do passado voltando à tona</strong>, <strong>decisões inadiáveis</strong> e <strong>verdades</strong> que você tentou esconder de si mesma, e você precisa se preparar pra isso.",
-  21: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Mundo</strong> traz bastante <strong>realização plena</strong>, <strong>expansão</strong> e <strong>conquistas grandiosas</strong>.<br><br>Mas se prepara que vem por aí muita <strong>exigência de maturidade</strong>, <strong>pressão para fechar pendências antigas</strong> e <strong>medo de dar o próximo passo</strong>, e você precisa se preparar pra isso.",
-  22: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Louco</strong> traz bastante <strong>liberdade</strong>, <strong>coragem de se jogar no novo</strong> e <strong>surpresas incríveis</strong>.<br><br>Mas se prepara que vem por aí muita <strong>incerteza</strong>, <strong>instabilidade financeira por impulsividade</strong> e <strong>passos em falso</strong> se você agir no escuro, e você precisa se preparar pra isso."
+  1:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Mago</strong> traz bastante <strong>poder de manifestação</strong>, <strong>inícios empolgantes</strong> e <strong>portas abertas</strong>.<br><br>Mas se prepara que vem por aí muita <strong>dispersão</strong>, <strong>promessas vazias</strong> e <strong>sobrecarga mental</strong> tentando abraçar o mundo sozinha, e <strong>você precisa se preparar pra isso</strong>.",
+  2:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Sacerdotisa</strong> traz bastante <strong>intuição aguçada</strong>, <strong>percepção espiritual</strong> e <strong>mistério</strong>.<br><br>Mas se prepara que vem por aí muita <strong>dúvida interna</strong>, <strong>segredos pesados vindo à tona</strong> e <strong>bloqueios emocionais</strong> por guardar tudo pra si, e <strong>você precisa se preparar pra isso</strong>.",
+  3:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Imperatriz</strong> traz bastante <strong>magnetismo pessoal</strong>, <strong>prosperidade</strong> e <strong>criatividade fértil</strong>.<br><br>Mas se prepara que vem por aí muita <strong>cobrança emocional</strong>, <strong>gastos por impulso</strong> e <strong>disputas de ego e ciúmes</strong> nas suas relações, e <strong>você precisa se preparar pra isso</strong>.",
+  4:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Imperador</strong> traz bastante <strong>ambição</strong>, <strong>conquista material</strong> e <strong>postura de liderança</strong>.<br><br>Mas se prepara que vem por aí muita <strong>pressão nos ombros</strong>, <strong>embates de poder</strong>, <strong>teimosia extrema</strong> e <strong>sobrecarga de responsabilidades</strong>, e <strong>você precisa se preparar pra isso</strong>.",
+  5:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Hierofante</strong> traz bastante <strong>sabedoria</strong>, <strong>alianças sérias</strong> e <strong>amadurecimento profissional</strong>.<br><br>Mas se prepara que vem por aí muita <strong>cobrança social</strong>, <strong>julgamento alheio</strong> e <strong>testes de fé</strong> que vão desafiar suas certezas, e <strong>você precisa se preparar pra isso</strong>.",
+  6:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano dos Enamorados</strong> traz bastante <strong>paixão</strong>, <strong>poder de atração</strong> e <strong>parcerias marcantes</strong>.<br><br>Mas se prepara que vem por aí muita <strong>dúvida cruel</strong>, <strong>tentações perigosas</strong> e <strong>encruzilhadas emocionais</strong> onde você não vai poder ficar em cima do muro, e <strong>você precisa se preparar pra isso</strong>.",
+  7:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Carro</strong> traz bastante <strong>movimento</strong>, <strong>viagens</strong> e <strong>avanço acelerado</strong> nas suas metas.<br><br>Mas se prepara que vem por aí muita <strong>correria exaustiva</strong>, <strong>ansiedade a mil</strong> e <strong>risco de atropelar tudo</strong> por falta de direção emocional, e <strong>você precisa se preparar pra isso</strong>.",
+  8:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Justiça</strong> traz bastante <strong>colheita kármica</strong>, <strong>equilíbrio</strong> e <strong>conquista daquilo que é seu por direito</strong>.<br><br>Mas se prepara que vem por aí muita <strong>cobrança implacável</strong>, <strong>cortes frios</strong> e <strong>acertos de contas</strong> onde nada vai passar batido, e <strong>você precisa se preparar pra isso</strong>.",
+  9:  "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Eremita</strong> traz bastante <strong>autoconhecimento profundo</strong>, <strong>clareza mental</strong> e <strong>maturidade espiritual</strong>.<br><br>Mas se prepara que vem por aí muita <strong>sensação de solidão</strong>, <strong>afastamentos necessários</strong> e <strong>crises existenciais profundas</strong>, e <strong>você precisa se preparar pra isso</strong>.",
+  10: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Roda da Fortuna</strong> traz bastante <strong>reviravolta positiva</strong>, <strong>sorte inesperada</strong> e <strong>destrave financeiro</strong>.<br><br>Mas se prepara que vem por aí muita <strong>instabilidade</strong>, <strong>altos e baixos repentinos</strong> e <strong>mudanças de planos sem aviso prévio</strong>, e <strong>você precisa se preparar pra isso</strong>.",
+  11: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Força</strong> traz bastante <strong>magnetismo</strong>, <strong>coragem</strong> e <strong>domínio próprio</strong>.<br><br>Mas se prepara que vem por aí muita <strong>provação de paciência</strong>, <strong>tensão acumulada</strong> e <strong>situações no limite</strong> que vão testar seu autocontrole, e <strong>você precisa se preparar pra isso</strong>.",
+  12: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Enforcado</strong> traz bastante <strong>despertar espiritual</strong>, <strong>virada de chave mental</strong> e <strong>libertação</strong>.<br><br>Mas se prepara que vem por aí muita <strong>sensação de estagnação</strong>, <strong>sacrifícios difíceis</strong> e <strong>atrasos</strong> que vão exigir uma mudança total de postura, e <strong>você precisa se preparar pra isso</strong>.",
+  13: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Morte</strong> traz bastante <strong>transformação radical</strong> e um <strong>renascimento poderoso</strong>.<br><br>Mas se prepara que vem por aí muita <strong>despedida inevitável</strong>, <strong>encerramento brusco de ciclos</strong> e <strong>desapegos profundos</strong> que doem na pele, e <strong>você precisa se preparar pra isso</strong>.",
+  14: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Temperança</strong> traz bastante <strong>cura emocional</strong>, <strong>harmonia</strong> e <strong>reconciliações</strong>.<br><br>Mas se prepara que vem por aí muita <strong>demora nos resultados</strong>, <strong>testes extremos de paciência</strong> e <strong>desgaste</strong> tentando equilibrar tudo ao mesmo tempo, e <strong>você precisa se preparar pra isso</strong>.",
+  15: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Diabo</strong> traz bastante <strong>ambição</strong>, <strong>ganhos financeiros</strong> e <strong>sedução avassaladora</strong>.<br><br>Mas se prepara que vem por aí muita <strong>tentação pesada</strong>, <strong>armadilhas de dependência emocional</strong>, <strong>inveja</strong> e <strong>jogos de manipulação</strong>, e <strong>você precisa se preparar pra isso</strong>.",
+  16: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Torre</strong> traz bastante <strong>libertação</strong>, <strong>quebra de ilusões</strong> e <strong>reconstrução em bases sólidas</strong>.<br><br>Mas se prepara que vem por aí muita <strong>quebra de expectativa</strong>, <strong>estruturas caindo por terra</strong> e <strong>verdades nuas e cruas</strong> que vão chacoalhar sua zona de conforto, e <strong>você precisa se preparar pra isso</strong>.",
+  17: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Estrela</strong> traz bastante <strong>brilho próprio</strong>, <strong>cura profunda</strong> e <strong>visibilidade para o seu trabalho</strong>.<br><br>Mas se prepara que vem por aí muita <strong>desilusão com pessoas próximas</strong>, <strong>testes de autoestima</strong> e <strong>frustrações</strong> por idealizar quem não merece, e <strong>você precisa se preparar pra isso</strong>.",
+  18: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano da Lua</strong> traz bastante <strong>poder intuitivo</strong>, <strong>magia</strong> e <strong>magnetismo misterioso</strong>.<br><br>Mas se prepara que vem por aí muita <strong>confusão mental</strong>, <strong>fofoca nos bastidores</strong>, <strong>ilusões perigosas</strong> e <strong>noites em claro</strong> lidando com inseguranças, e <strong>você precisa se preparar pra isso</strong>.",
+  19: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Sol</strong> traz bastante <strong>sucesso</strong>, <strong>prosperidade</strong>, <strong>clareza</strong> e <strong>reconhecimento</strong>.<br><br>Mas se prepara que vem por aí muita <strong>exposição</strong>, <strong>inveja de quem não suporta a sua luz</strong> e <strong>choques de ego</strong> no seu caminho, e <strong>você precisa se preparar pra isso</strong>.",
+  20: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Julgamento</strong> traz bastante <strong>despertar de propósito</strong>, <strong>virada de vida</strong> e <strong>segundas chances</strong>.<br><br>Mas se prepara que vem por aí muita <strong>cobrança do passado voltando à tona</strong>, <strong>decisões inadiáveis</strong> e <strong>verdades</strong> que você tentou esconder de si mesma, e <strong>você precisa se preparar pra isso</strong>.",
+  21: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Mundo</strong> traz bastante <strong>realização plena</strong>, <strong>expansão</strong> e <strong>conquistas grandiosas</strong>.<br><br>Mas se prepara que vem por aí muita <strong>exigência de maturidade</strong>, <strong>pressão para fechar pendências antigas</strong> e <strong>medo de dar o próximo passo</strong>, e <strong>você precisa se preparar pra isso</strong>.",
+  22: "Eita minha <strong>Alma Divônica</strong>, esse teu ano que vem vai dar o que falar viu! O <strong>arcano do Louco</strong> traz bastante <strong>liberdade</strong>, <strong>coragem de se jogar no novo</strong> e <strong>surpresas incríveis</strong>.<br><br>Mas se prepara que vem por aí muita <strong>incerteza</strong>, <strong>instabilidade financeira por impulsividade</strong> e <strong>passos em falso</strong> se você agir no escuro, e <strong>você precisa se preparar pra isso</strong>."
 };
 
 const linksKiwify = {
-  1: "https://pay.kiwify.com.br/vm6ZQkI",  // MAGO
-  2: "https://pay.kiwify.com.br/JIFve3P",  // SACERDOTISA
-  3: "https://pay.kiwify.com.br/FYCCRDJ",  // IMPERATRIZ
-  4: "https://pay.kiwify.com.br/x79EleQ",  // IMPERADOR
-  5: "https://pay.kiwify.com.br/d6MCB16",  // PAPA (Hierofante)
-  6: "https://pay.kiwify.com.br/OYt1aZj",  // ENAMORADOS
-  7: "https://pay.kiwify.com.br/xBVUiHN",  // CARRO
-  8: "https://pay.kiwify.com.br/flU4SeR",   // JUSTIÇA
-  9: "https://pay.kiwify.com.br/1aEiozs",  // EREMITA
-  10: "https://pay.kiwify.com.br/aR6VFNU", // RODA DA FORTUNA
-  11: "https://pay.kiwify.com.br/TyDZ3a0", // FORÇA
-  12: "https://pay.kiwify.com.br/hvLcscm", // ENFORCADO (Pendurado)
-  13: "https://pay.kiwify.com.br/U2ZdMjP", // MORTE
-  14: "https://pay.kiwify.com.br/yKbumTN", // TEMPERANÇA
-  15: "https://pay.kiwify.com.br/3S6oDJ9",  // DIABO
-  16: "https://pay.kiwify.com.br/l6hTxhy",  // TORRE
-  17: "https://pay.kiwify.com.br/aVmIe5X",  // ESTRELA
-  18: "https://pay.kiwify.com.br/xPODnDc",  // LUA
-  19: "https://pay.kiwify.com.br/2OJlqTN",  // SOL
-  20: "https://pay.kiwify.com.br/QZNSjPr",  // JULGAMENTO
-  21: "https://pay.kiwify.com.br/GLd6eY5",  // MUNDO
-  22: "https://pay.kiwify.com.br/4O6ucDh"   // LOUCO
+  1: "https://pay.kiwify.com.br/g9eCxH2", // MAGO
+  2: "https://pay.kiwify.com.br/u1vydTB", // SACERDOTISA
+  3: "https://pay.kiwify.com.br/JbGRyIb", // IMPERATRIZ
+  4: "https://pay.kiwify.com.br/CjctoLz", // IMPERADOR
+  5: "https://pay.kiwify.com.br/gC3u3pE", // PAPA (Hierofante)
+  6: "https://pay.kiwify.com.br/5KbziRk", // ENAMORADOS
+  7: "https://pay.kiwify.com.br/R9cnfoZ", // CARRO
+  8: "https://pay.kiwify.com.br/eHObiIZ", // JUSTIÇA
+  9: "https://pay.kiwify.com.br/uxBRLdD", // EREMITA
+  10: "https://pay.kiwify.com.br/hMZ9ExB", // RODA DA FORTUNA
+  11: "https://pay.kiwify.com.br/thXCxL0", // FORÇA
+  12: "https://pay.kiwify.com.br/Unin56N", // ENFORCADO (Pendurado)
+  13: "https://pay.kiwify.com.br/XZUByEd", // MORTE
+  14: "https://pay.kiwify.com.br/QvosYul", // TEMPERANÇA
+  15: "https://pay.kiwify.com.br/zytmKdG", // DIABO
+  16: "https://pay.kiwify.com.br/IydySSM", // TORRE
+  17: "https://pay.kiwify.com.br/M8oQdM6", // ESTRELA
+  18: "https://pay.kiwify.com.br/kLrC5G3", // LUA
+  19: "https://pay.kiwify.com.br/S2yGUCt", // SOL
+  20: "https://pay.kiwify.com.br/L2pGKcO", // JULGAMENTO
+  21: "https://pay.kiwify.com.br/TvmLqXb", // MUNDO
+  22: "https://pay.kiwify.com.br/Ve4s4rB"  // LOUCO
 };
 
 // =========================
@@ -271,8 +309,7 @@ function somaDigitos(strOuNum) {
 }
 
 // =========================
-// Cálculo do Arcano Anual (Dígitos do Aniversário DD+MM + Dígitos do Ano Regente 2027)
-// Exemplo: 16/09 -> 1+6+0+9+2+0+2+7 = 27 -> 2+7 = 9 (O Eremita)
+// Cálculo do Arcano Anual
 // =========================
 function calcularArcanos(dia, mes, anoNascimento) {
   const diaFormatado = String(dia).padStart(2, '0');
@@ -296,14 +333,36 @@ function calcularComplementares(arcanoBase) {
 }
 
 // =========================
-// Flip: revelar carta 
+// Salvar contato no log.txt via PHP
+// =========================
+function registrarLogContato(nome, dataNascimento) {
+  const agora = new Date();
+  const horarioEnvio = agora.toLocaleString('pt-BR');
+
+  fetch('salvar_log.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      nome: nome,
+      data_nascimento: dataNascimento,
+      horario: horarioEnvio
+    })
+  }).catch(() => {
+    // Silencioso caso rode localmente sem servidor PHP ativo
+  });
+}
+
+// =========================
+// Flip: revelar carta (Corrigido para funcionar em todas as cartas, incluindo O Mago)
 // =========================
 function ativarFlip(cardId) {
   const card = document.getElementById(cardId);
   if (!card) return;
-  const backImg = card.querySelector(".flip-back img");
-  const sound = document.getElementById("flip-sound");
 
+  // Garante estado inicial desvirado
+  card.classList.remove("flipped");
+
+  const sound = document.getElementById("flip-sound");
   const idTextoMap = {
     cardPessoal: 'arcanoPessoal',
     cardComplementar1: 'arcanoComplementar1',
@@ -311,10 +370,10 @@ function ativarFlip(cardId) {
   };
   const txtEl = document.getElementById(idTextoMap[cardId]);
 
-  if (!backImg) return;
-
   const handleClick = () => {
+    if (card.classList.contains("flipped")) return;
     card.classList.add("flipped");
+
     if (sound) {
       try { sound.currentTime = 0; sound.play(); } catch (e) { }
     }
@@ -323,7 +382,7 @@ function ativarFlip(cardId) {
       txtEl.classList.add("revelado");
     }
 
-    // Quando virar a carta principal, esconde a dica de toque e revela o mini-texto + CTA
+    // Quando virar a carta principal, esconde a dica de toque e revela o mini-texto
     if (cardId === "cardPessoal") {
       const dicaToque = document.getElementById("dica-toque");
       if (dicaToque) dicaToque.classList.add("hidden");
@@ -335,9 +394,7 @@ function ativarFlip(cardId) {
       }
     }
 
-    // ========================================================
-    // REVELA A OFERTA (CTA) QUANDO A CARTA FOR VIRADA
-    // ========================================================
+    // Revela a oferta (CTA) quando a carta for virada
     const cta = document.getElementById("call-to-action");
     if (cta && cta.classList.contains("cta-oculto")) {
       setTimeout(() => {
@@ -345,10 +402,9 @@ function ativarFlip(cardId) {
         cta.classList.add("cta-animado");
       }, 500); 
     }
-
-    backImg.removeEventListener("click", handleClick);
   };
-  backImg.addEventListener("click", handleClick);
+
+  card.onclick = handleClick;
 }
 
 // =========================
@@ -360,18 +416,28 @@ if (form) {
     e.preventDefault();
 
     const nomeCompleto = document.getElementById("nome")?.value.trim();
-    const data = document.getElementById("data")?.value;
+    const data = document.getElementById("data")?.value.trim();
+    const avisoData = document.getElementById("aviso-data");
     if (!nomeCompleto || !data) return;
 
     const partesData = data.split("/");
-    if (partesData.length < 2) return;
+    // Valida se digitou a data inteira (DD/MM/AAAA)
+    if (partesData.length < 3 || partesData[0].length !== 2 || partesData[1].length !== 2 || partesData[2].length !== 4) {
+      if (avisoData) {
+        avisoData.classList.add("aviso-erro");
+        avisoData.innerHTML = "⚠️ Por favor, digite sua <strong>data de nascimento completa</strong> com os 4 dígitos do ano (Ex: 15/08/1995).";
+      }
+      document.getElementById("data")?.focus();
+      return;
+    }
+
+    // Salva no log.txt (Nome, Data de Nascimento e Horário)
+    registrarLogContato(nomeCompleto, data);
     
     // Pega apenas o primeiro nome para ficar mais amigável no texto de vendas
     const nomePrimeiro = nomeCompleto.split(" ")[0];
 
-    // ========================================================
-    // DISPARA O EVENTO DE LEAD NO PIXEL DO FACEBOOK
-    // ========================================================
+    // Dispara o evento de Lead no Pixel do Facebook
     if (typeof fbq === 'function') {
       fbq('track', 'Lead');
     }
@@ -470,9 +536,7 @@ if (form) {
           ativarFlip("cardComplementar2");
         }
         
-        // ========================================================
-        // INJEÇÃO DAS VARIÁVEIS DINÂMICAS NO TEXTO DO CTA
-        // ========================================================
+        // Injeção das variáveis dinâmicas no texto do CTA
         const spanNomePessoa = document.getElementById("span-nome-pessoa");
         const spanNomeArcano = document.getElementById("span-nome-arcano");
         
@@ -529,6 +593,11 @@ if (inputData) {
     else if (v.length > 2) { formatado = v.replace(/(\d{2})(\d{0,2})/, "$1/$2"); } 
     else { formatado = v; }
     e.target.value = formatado;
+
+    const avisoData = document.getElementById("aviso-data");
+    if (avisoData && v.length === 8) {
+      avisoData.classList.remove("aviso-erro");
+    }
   });
 }
 </script>
