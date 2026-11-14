@@ -35,7 +35,7 @@ src="https://www.facebook.com/tr?id=3003740953158547&ev=PageView&noscript=1"
 <!-- Etiqueta fixa de cronômetro na tela o tempo inteiro -->
 <div id="cronometro-badge" class="cronometro-badge">
   <span class="cronometro-icone">⏳</span>
-  <span id="cronometro-texto">Falta 0 dias, 0 horas e 0 minutos pro ano acabar!</span>
+  <span id="cronometro-texto">Faltam 0 dias, 0 horas e 0 minutos pro ano acabar!</span>
 </div>
 
 <div id="loading-screen" class="hidden">
@@ -211,7 +211,7 @@ function atualizarCronometro() {
   const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
   const minutos = Math.floor((diferenca / 1000 / 60) % 60);
 
-  textoEl.innerHTML = `Falta <strong>${dias} dias</strong>, <strong>${horas} horas</strong> e <strong>${minutos} minutos</strong> pro ano acabar!`;
+  textoEl.innerHTML = `Faltam <strong>${dias} dias</strong>, <strong>${horas} horas</strong> e <strong>${minutos} minutos</strong> pro ano acabar!`;
 }
 
 atualizarCronometro();
