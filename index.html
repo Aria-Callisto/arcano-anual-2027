@@ -57,12 +57,20 @@ src="https://www.facebook.com/tr?id=3003740953158547&ev=PageView&noscript=1"
     <div class="input-group">
       <input type="text" id="nome" placeholder="Digite seu primeiro nome" required autocomplete="given-name">
     </div>
-    <div class="input-group">
-      <input type="text" id="data" placeholder="Data de Nascimento (DD/MM/AAAA)" inputmode="numeric" maxlength="10" required>
-      <small id="aviso-data" class="aviso-data">
-        ⚠️ Coloque sua <strong>data de nascimento inteira</strong> (dia, mês e os 4 dígitos do ano. Ex: 15/08/1995).
-      </small>
+    <div class="input-group date-inputs" style="flex-direction: row; gap: 8px; width: 100%; justify-content: center;">
+      <select id="dia" required style="width: 30%;">
+        <option value="" disabled selected>Dia</option>
+        <option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option>
+      </select>
+      <select id="mes" required style="width: 40%;">
+        <option value="" disabled selected>Mês</option>
+        <option value="01">01 (Jan)</option><option value="02">02 (Fev)</option><option value="03">03 (Mar)</option><option value="04">04 (Abr)</option><option value="05">05 (Mai)</option><option value="06">06 (Jun)</option><option value="07">07 (Jul)</option><option value="08">08 (Ago)</option><option value="09">09 (Set)</option><option value="10">10 (Out)</option><option value="11">11 (Nov)</option><option value="12">12 (Dez)</option>
+      </select>
+      <input type="text" id="ano" value="2027" disabled class="locked-year" style="width: 30%;">
     </div>
+    <small id="aviso-data" class="aviso-data explicacao-calculo">
+      💡 Para o cálculo do seu Arcano Anual pelo <strong>Método Ária</strong>, basta informar o seu dia e mês de nascimento. O cálculo é a soma de cada dígito do seu <strong>Dia + Mês + 2027</strong>.
+    </small>
     <button type="submit" class="btn-principal">✨ Revelar Meu Arcano Anual ✨</button>
   </form>
 
@@ -339,17 +347,30 @@ function registrarLogContato(nome, dataNascimento) {
   const agora = new Date();
   const horarioEnvio = agora.toLocaleString('pt-BR');
 
-  fetch('salvar_log.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      nome: nome,
-      data_nascimento: dataNascimento,
-      horario: horarioEnvio
-    })
-  }).catch(() => {
-    // Silencioso caso rode localmente sem servidor PHP ativo
-  });
+  // --- CONFIGURAÇÃO PARA GITHUB PAGES ---
+  // Opção 1: Web3Forms (Gratuito, os dados chegam no seu email)
+  // Gere sua chave em: https://web3forms.com/ e cole abaixo:
+  const WEB3FORMS_ACCESS_KEY = "COLE_SUA_CHAVE_AQUI"; 
+  
+  // Opção 2: Webhook (Make, Zapier, n8n) para salvar no Google Sheets
+  // Se preferir, troque a URL do fetch abaixo pela URL do seu Webhook.
+
+  if (WEB3FORMS_ACCESS_KEY !== "COLE_SUA_CHAVE_AQUI") {
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_ACCESS_KEY,
+        subject: "Novo Lead - Método Ária 2027 ✨",
+        Nome: nome,
+        Data_de_Nascimento: dataNascimento,
+        Horario: horarioEnvio
+      })
+    }).catch(err => console.error("Erro ao enviar lead:", err));
+  }
 }
 
 // =========================
@@ -416,23 +437,13 @@ if (form) {
     e.preventDefault();
 
     const nomeCompleto = document.getElementById("nome")?.value.trim();
-    const data = document.getElementById("data")?.value.trim();
-    const avisoData = document.getElementById("aviso-data");
-    if (!nomeCompleto || !data) return;
+    const diaSelect = document.getElementById("dia")?.value;
+    const mesSelect = document.getElementById("mes")?.value;
+    
+    if (!nomeCompleto || !diaSelect || !mesSelect) return;
 
-    const partesData = data.split("/");
-    // Valida se digitou a data inteira (DD/MM/AAAA)
-    if (partesData.length < 3 || partesData[0].length !== 2 || partesData[1].length !== 2 || partesData[2].length !== 4) {
-      if (avisoData) {
-        avisoData.classList.add("aviso-erro");
-        avisoData.innerHTML = "⚠️ Por favor, digite sua <strong>data de nascimento completa</strong> com os 4 dígitos do ano (Ex: 15/08/1995).";
-      }
-      document.getElementById("data")?.focus();
-      return;
-    }
-
-    // Salva no log.txt (Nome, Data de Nascimento e Horário)
-    registrarLogContato(nomeCompleto, data);
+    // Salva o contato e envia a data
+    registrarLogContato(nomeCompleto, `${diaSelect}/${mesSelect}`);
     
     // Pega apenas o primeiro nome para ficar mais amigável no texto de vendas
     const nomePrimeiro = nomeCompleto.split(" ")[0];
@@ -442,8 +453,10 @@ if (form) {
       fbq('track', 'Lead');
     }
 
-    const [dia, mes, ano] = partesData.map(Number);
-    const arcanos = calcularArcanos(dia, mes, ano || ANO_REGENTE);
+    const dia = Number(diaSelect);
+    const mes = Number(mesSelect);
+    const ano = ANO_REGENTE;
+    const arcanos = calcularArcanos(dia, mes, ano);
     const complementares = calcularComplementares(arcanos.anual);
 
     // Esconde os campos do form e subtítulo para dar espaço limpo

@@ -152,7 +152,7 @@ form {
   align-items: center;
 }
 
-input {
+input, select {
   width: 100%;
   background: rgba(255, 255, 255, 0.96);
   color: #1a000d;
@@ -178,6 +178,46 @@ input:focus {
   border-color: #ff0077;
   box-shadow: 0 0 18px rgba(255, 0, 119, 0.45);
   transform: translateY(-1px);
+}
+
+
+/* Remove setinha nativa e estiliza o Select */
+select {
+  cursor: pointer;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23ff0077" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position-x: calc(100% - 10px);
+  background-position-y: 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 28px;
+}
+
+select:focus {
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23ff0077" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 14l5-5 5 5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+}
+
+/* CSS do 2027 travado */
+.locked-year {
+  background: rgba(255, 255, 255, 0.45) !important;
+  color: #552b41 !important;
+  cursor: not-allowed;
+  border-color: rgba(255, 105, 180, 0.15) !important;
+  box-shadow: none !important;
+  font-weight: 700;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.explicacao-calculo {
+  color: #ffb3d9;
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  text-align: center;
+  font-size: 0.85rem;
+}
+.explicacao-calculo strong {
+  color: #ffd700;
 }
 
 /* Aviso pequeno embaixo do campo de data de nascimento */
